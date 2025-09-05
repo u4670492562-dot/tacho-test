@@ -7,23 +7,7 @@ let vehicle = "";
 let driver = "";
 const DEFAULT_SPEED_LIMIT = 100;
 let alertShown = false;
-const CORRECT_PASSWORD = "Patryk1243laweta"; // Zmień na swoje hasło!
-
-function checkPassword(event) {
-    event.preventDefault();
-    const password = document.getElementById("passwordInput").value;
-    const errorMessage = document.getElementById("errorMessage");
-    const loginContainer = document.getElementById("login-container");
-    const appContainer = document.getElementById("app-container");
-
-    if (password === CORRECT_PASSWORD) {
-        loginContainer.style.display = "none";
-        appContainer.style.display = "block";
-        errorMessage.style.display = "none";
-    } else {
-        errorMessage.style.display = "block";
-    }
-}
+let speedWatchId = null; // Identyfikator dla watchPosition
 
 function startActivity() {
     const activity = document.getElementById("activitySelect").value;
@@ -32,10 +16,13 @@ function startActivity() {
         startTime = new Date();
         document.getElementById("status").textContent = `Aktualny status: ${currentActivity}`;
         intervalId = setInterval(updateTime, 1000);
-        updateSpeed();
         logActivity("Rozpoczęto: " + activity);
         logActivity("Uwaga: Limit prędkości ustawiony na 100 km/h. Dostosuj się do lokalnych przepisów!");
         alertShown = false;
+
+        if (currentActivity === "Jazda") {
+            updateSpeed();
+        }
     } else {
         alert("Wybierz aktywność lub zakończ bieżącą!");
     }
@@ -50,8 +37,11 @@ function endActivity() {
         currentActivity = null;
         startTime = null;
         logActivity(`Zakończono: ${currentActivity}, Czas: ${formatTime(duration)}`);
-        updateSpeed();
-        alertShown = false;
+
+        if (speedWatchId) {
+            navigator.geolocation.clearWatch(speedWatchId);
+            speedWatchId = null;
+        }
     }
 }
 
@@ -65,11 +55,11 @@ function updateTime() {
 }
 
 function updateSpeed() {
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
+    if (currentActivity === "Jazda" && navigator.geolocation) {
+        speedWatchId = navigator.geolocation.watchPosition(
             (position) => {
                 const speed = position.coords.speed ? Math.round(position.coords.speed * 3.6) : 0;
-                speedLog.push({ time: new Date(), speed: speed, limit: DEFAULT_SPEED_LIMIT });
+                speedLog.push({ time: new Date(), speed: speed, limit: DEFAULT_SPEED_LIMIT, latitude: position.coords.latitude, longitude: position.coords.longitude });
                 document.getElementById("status").textContent = `Aktualny status: ${currentActivity} (Prędkość: ${speed} km/h)`;
                 checkSpeedLimit(speed);
             },
@@ -79,8 +69,6 @@ function updateSpeed() {
             },
             { enableHighAccuracy: true, maximumAge: 0 }
         );
-    } else {
-        alert("Geolokalizacja nie jest obsługiwana przez Twoją przeglądarkę.");
     }
 }
 
@@ -152,16 +140,51 @@ function saveVehicle() {
 function generateReport() {
     const period = document.getElementById("periodSelect").value;
     if (period) {
-        let reportContent = `Raport - ${period}\n\nKierowca: ${driver}\nPojazd: ${vehicle}\n\nAktywności:\n`;
-        activityLog.forEach(entry => {
-            reportContent += `${entry.time.toLocaleString()} - ${entry.message}\n`;
+        let reportContent = `
+            <h3>Raport - ${period}</h3>
+            <p><strong>Kierowca:</strong> ${driver || "Nie podano"}</p>
+            <p><strong>Pojazd:</strong> ${vehicle || "Nie wybrano"}</p>
+            <table border="1" cellpadding="5" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="background-color: #2e3b3c; color: #ffffff;">
+                        <th>Data/Czas</th>
+                        <th>Aktywność</th>
+                        <th>Prędkość (km/h)</th>
+                        <th>Limit (km/h)</th>
+                        <th>Czas trwania</th>
+                        <th>Lokalizacja (approx.)</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        // Filtruj activityLog i speedLog, łącząc dane
+        activityLog.forEach((entry, index) => {
+            const speedEntry = speedLog.find(s => s.time.toISOString().slice(0, 19) === entry.time.toISOString().slice(0, 19));
+            const duration = index > 0 ? Math.floor((entry.time - activityLog[index - 1].time) / 1000) : 0;
+            const location = speedEntry ? `${speedEntry.latitude.toFixed(2)}, ${speedEntry.longitude.toFixed(2)}` : "Brak danych";
+            const speed = speedEntry ? speedEntry.speed : (entry.message.includes("Przekroczenie") ? parseInt(entry.message.match(/\d+/)[0]) : 0);
+            const limit = speedEntry ? speedEntry.limit : DEFAULT_SPEED_LIMIT;
+
+            reportContent += `
+                <tr>
+                    <td>${entry.time.toLocaleString()}</td>
+                    <td>${entry.message.split(" - ")[1] || "Brak"}</td>
+                    <td>${speed > 0 ? speed : "-"}</td>
+                    <td>${limit}</td>
+                    <td>${duration > 0 ? formatTime(duration) : "-"}</td>
+                    <td>${location}</td>
+                </tr>
+            `;
         });
-        reportContent += "\nPrędkość:\n";
-        speedLog.forEach(entry => {
-            reportContent += `${entry.time.toLocaleString()} - Prędkość: ${entry.speed} km/h, Limit: ${entry.limit} km/h\n`;
-        });
+
+        reportContent += `
+                </tbody>
+            </table>
+        `;
+
         const log = document.getElementById("log");
-        log.innerHTML = reportContent.split("\n").map(line => `<p>${line}</p>`).join("");
+        log.innerHTML = reportContent;
     }
 }
 
@@ -169,7 +192,7 @@ function saveReport() {
     const log = document.getElementById("log").innerHTML;
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text(log, 10, 10);
+    doc.fromHTML(log, 10, 10, { width: 180 });
     doc.save("raport.pdf");
 }
 
@@ -189,6 +212,10 @@ function resetApplication() {
     activityLog = [];
     speedLog = [];
     clearInterval(intervalId);
+    if (speedWatchId) {
+        navigator.geolocation.clearWatch(speedWatchId);
+        speedWatchId = null;
+    }
     document.getElementById("status").textContent = "Aktualny status: Brak";
     document.getElementById("remainingTime").textContent = "Pozostały czas jazdy: 09:00:00";
     document.getElementById("currentDuration").textContent = "Czas pracy/przerwy: 00:00:00";
