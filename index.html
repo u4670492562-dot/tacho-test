@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tachograf 2025 - Logowanie</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div id="login-container" class="login-container">
+        <h2>Logowanie</h2>
+        <form id="loginForm" onsubmit="checkPassword(event)">
+            <input type="password" id="passwordInput" placeholder="Wprowadź hasło" required>
+            <button type="submit">Zaloguj</button>
+        </form>
+        <p id="errorMessage" style="color: red; display: none;">Nieprawidłowe hasło. Spróbuj ponownie.</p>
+    </div>
+    <div id="app-container" class="main-container" style="display: none;">
+        <header class="header">
+            <div class="status-bar">
+                <div class="status" id="status">Aktualny status: Brak</div>
+                <div class="status" id="remainingTime">Pozostały czas jazdy: 09:00:00</div>
+                <div class="status" id="vehicle">Pojazd: Nie wybrano</div>
+                <div class="status" id="currentDuration">Czas pracy/przerwy: 00:00:00</div>
+            </div>
+        </header>
+        
+        <aside class="sidebar left">
+            <select id="activitySelect">
+                <option value="">Wybierz aktywność</option>
+                <option value="Jazda">Jazda</option>
+                <option value="Przerwa">Przerwa</option>
+                <option value="Odpoczynek">Odpoczynek</option>
+                <option value="Inna praca">Inna praca</option>
+            </select>
+            
+            <button class="start" onclick="startActivity()">Rozpocznij</button>
+            <button class="end" onclick="endActivity()">Zakończ</button>
+        </aside>
+        
+        <main class="main-content">
+            <select id="periodSelect">
+                <option value="">Wybierz okres</option>
+                <option value="Ostatnie 24h">Ostatnie 24h</option>
+                <option value="Ostatnie 7 dni">Ostatnie 7 dni</option>
+                <option value="Ostatnie 28 dni">Ostatnie 28 dni</option>
+            </select>
+            
+            <button class="report" onclick="generateReport()">Pokaż raport</button>
+            <button class="save-report" onclick="saveReport()">Zapisz raport</button>
+            <button class="export-data" onclick="exportData()">Eksportuj dane</button>
+            <button class="reset" onclick="resetApplication()">Reset</button>
+        </main>
+        
+        <aside class="sidebar right">
+            <input type="text" id="driverInput" placeholder="Imię i nazwisko">
+            <input type="date" id="driverCardExpiry" placeholder="Data ważności karty">
+            <button class="save-driver" onclick="saveDriver()">Zapisz kierowcę</button>
+            <input type="text" id="vehicleInput" placeholder="Numer rejestracyjny">
+            <button class="save-vehicle" onclick="saveVehicle()">Zapisz pojazd</button>
+            <select id="vehicleSelect">
+                <option value="">Wybierz pojazd</option>
+            </select>
+        </aside>
+        
+        <footer class="footer">
+            <div id="log"></div>
+        </footer>
+    </div>
+    
+    <script src="./script.js"></script>
+</body>
+</html>
