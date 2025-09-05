@@ -2,140 +2,179 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(to bottom, #1c2526, #2e3b3c);
+    background: #1c2526;
     color: #ffffff;
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Dostosowanie dla ekranów mobilnych */
+    align-items: center;
     overflow-x: hidden;
-    background-image: url('IMG_5226.JPG');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     position: relative;
-    min-height: 100%; /* Zapobiega skracaniu na małych ekranach */
 }
 
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
+.tacho-container {
+    perspective: 1000px;
+}
+
+.tacho-frame {
+    width: 350px; /* Typowy rozmiar tachografu */
+    height: 250px;
+    background: #2e3b3c; /* Szara obudowa */
+    border: 3px solid #444; /* Ramka */
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tacho-bezel {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 0;
-}
-
-.main-container {
-    display: flex;
-    flex-direction: column; /* Zmiana na kolumnę dla mobilności */
-    width: 95%;
-    max-width: 800px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    gap: 10px;
-    flex-wrap: wrap;
-    min-height: 90vh; /* Więcej miejsca na mobilnych */
-    position: relative;
-    z-index: 1;
-    margin-top: 10px; /* Odstęp od góry */
-}
-
-.header {
-    width: 100%;
-    display: flex;
-    flex-direction: column; /* Kolumna dla mniejszych ekranów */
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    padding: 10px;
-    backdrop-filter: blur(5px);
-}
-
-.status-bar {
-    display: flex;
-    flex-direction: column; /* Pionowy układ na telefonie */
-    width: 100%;
-    gap: 5px;
-    position: relative;
-    z-index: 1;
-}
-
-.status {
-    font-size: 14px;
-    color: #d3d3d3;
-    font-weight: 500;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px;
+    background: #333; /* Wewnętrzna ramka */
+    border: 2px solid #555;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 100%; /* Pełna szerokość na mobilnych */
-}
-
-.sidebar, .main-content {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
     padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    min-width: 0;
-    margin: 5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
-.sidebar.left, .sidebar.right {
-    flex: 0 0 100%; /* Pełna szerokość na mobilnych */
-}
-
-.main-content {
-    flex: 0 0 100%; /* Pełna szerokość */
-}
-
-.footer {
+.display {
     width: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    padding: 10px;
-    margin-top: 10px;
-    backdrop-filter: blur(5px);
-    min-height: 100px;
-    overflow-y: auto;
+    height: 60px;
+    background: #000;
+    border: 2px solid #666;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+    color: #0f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lcd-line {
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.nav, .func {
+    width: 60px;
+    height: 40px;
+    background: linear-gradient(to bottom, #666, #444);
+    border: 2px solid #333;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+}
+
+.nav.ok {
+    background: linear-gradient(to bottom, #0f0, #0b0);
+}
+
+.func.end {
+    background: linear-gradient(to bottom, #ff4444, #cc0000);
+}
+
+.nav:hover, .func:hover {
+    transform: translateY(-1px);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.nav:active, .func:active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.card-slots {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.card-slot {
+    background: #444;
+    padding: 5px;
+    border: 1px solid #666;
+    border-radius: 3px;
+    width: 45%;
+    text-align: center;
     font-size: 12px;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.printer {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.print {
+    width: 80px;
+    height: 30px;
+    background: linear-gradient(to bottom, #ff9500, #cc7a00);
+    border: 2px solid #333;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+}
+
+.print:hover {
+    transform: translateY(-1px);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.print:active {
+    transform: translateY(1px);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
 }
 
 select, input, button {
     width: 100%;
-    padding: 10px; /* Większy padding dla łatwiejszego klikania */
-    margin: 5px 0;
-    border-radius: 10px;
+    padding: 8px;
+    margin: 3px 0;
+    border-radius: 5px;
     border: none;
     color: #ffffff;
-    font-size: 16px; /* Większa czcionka na mobilnych */
+    font-size: 14px;
     text-align: center;
-    transition: all 0.2s ease;
     box-sizing: border-box;
-    max-width: 100%;
+    background: #444;
 }
 
 select {
-    background: linear-gradient(to bottom right, #007aff, #005bb5);
+    background: #007aff;
     appearance: none;
-    background-position: right 10px center;
-    background-repeat: no-repeat;
+    padding-right: 20px;
     cursor: pointer;
-    padding-right: 30px; /* Więcej miejsca na strzałkę */
-}
-
-input[type="text"], input[type="date"], input[type="password"] {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
 }
 
 input::placeholder {
@@ -144,24 +183,25 @@ input::placeholder {
 
 button {
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    min-height: 40px; /* Minimalna wysokość dla łatwiejszego dotyku */
-}
-
-button.start {
-    background: linear-gradient(to bottom right, #34c759, #28a745);
-}
-
-button.end {
-    background: linear-gradient(to bottom right, #ff2d55, #cc0000);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    min-height: 35px;
+    background: #555;
 }
 
 button.report {
-    background: linear-gradient(to bottom right, #007aff, #005bb5);
+    background: #007aff;
 }
 
-button.save-vehicle, button.save-driver, button.save-report, button.export-data, button.reset {
-    background: linear-gradient(to bottom right, #5856d6, #3d3a8f);
+button.save-report {
+    background: #5856d6;
+}
+
+button.export-data {
+    background: #34c759;
+}
+
+button.reset {
+    background: #ff2d55;
 }
 
 button:hover {
@@ -171,83 +211,38 @@ button:hover {
 
 button:active {
     transform: translateY(1px);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Media Query dla mniejszych ekranów (do 600px) */
-@media (max-width: 600px) {
-    .main-container {
-        width: 98%;
-        padding: 5px;
-    }
-    .header {
-        padding: 5px;
-    }
-    .status {
-        font-size: 12px;
-        padding: 3px;
-    }
-    .footer {
-        padding: 5px;
-        min-height: 80px;
-        font-size: 10px;
-    }
-    select, input, button {
-        font-size: 14px;
-        padding: 8px;
-    }
-}
-
-/* Media Query dla bardzo małych ekranów (do 400px) */
 @media (max-width: 400px) {
-    .main-container {
-        width: 100%;
-        padding: 3px;
-        border-radius: 10px;
+    .tacho-frame {
+        width: 300px;
+        height: 220px;
+        padding: 15px;
     }
-    .header {
+    .display {
+        height: 50px;
         padding: 3px;
     }
-    .status {
+    .lcd-line {
+        font-size: 16px;
+    }
+    .nav, .func {
+        width: 50px;
+        height: 35px;
+        font-size: 16px;
+    }
+    .card-slot {
         font-size: 10px;
-        padding: 2px;
-    }
-    .sidebar, .main-content {
-        padding: 5px;
-    }
-    .footer {
         padding: 3px;
-        min-height: 60px;
-        font-size: 8px;
+    }
+    .print {
+        width: 70px;
+        height: 25px;
+        font-size: 12px;
     }
     select, input, button {
         font-size: 12px;
         padding: 6px;
-        margin: 3px 0;
-    }
-    button {
-        font-weight: 500;
-        min-height: 35px;
-    }
-}
-
-/* Dostosowanie dla iPhone’a (specyficzne proporcje) */
-@media (max-height: 800px) and (max-width: 430px) {
-    .main-container {
-        min-height: 95vh;
-        padding: 5px;
-    }
-    .status-bar {
-        gap: 3px;
-    }
-    .status {
-        font-size: 11px;
-        padding: 2px;
-    }
-    select, input, button {
-        font-size: 13px;
-        padding: 7px;
-    }
-    .footer {
-        min-height: 70px;
     }
 }
