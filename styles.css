@@ -14,71 +14,75 @@ body {
 
 .tacho-container {
     perspective: 1000px;
-}
-
-.tacho-frame {
-    width: 350px; /* Typowy rozmiar tachografu */
-    height: 250px;
-    background: #2e3b3c; /* Szara obudowa */
-    border: 3px solid #444; /* Ramka */
-    border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-    position: relative;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.tacho-frame {
+    width: 675px; /* 18 cm przy 96 DPI */
+    height: 187px; /* 5 cm przy 96 DPI */
+    background: #2e3b3c;
+    border: 3px solid #444;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    padding: 10px;
+    display: grid;
+    grid-template-areas:
+        "display report"
+        "buttons report"
+        "card vehicle";
+    gap: 5px;
 }
 
 .tacho-bezel {
     width: 100%;
     height: 100%;
-    background: #333; /* Wewnętrzna ramka */
+    background: #333;
     border: 2px solid #555;
     border-radius: 8px;
-    padding: 10px;
+    padding: 5px;
+    display: contents;
+}
+
+.display-section {
+    grid-area: display;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
+    justify-content: flex-start;
 }
 
 .display {
-    width: 100%;
-    height: 60px;
+    width: 300px;
+    height: 80px;
     background: #000;
     border: 2px solid #666;
     border-radius: 5px;
     padding: 5px;
-    margin-bottom: 10px;
     text-align: center;
     font-family: "Courier New", Courier, monospace;
-    color: #0f0;
+    color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.lcd-line {
-    font-size: 18px;
-    line-height: 1.2;
-}
-
-.buttons {
+.button-section {
+    grid-area: buttons;
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    margin-bottom: 10px;
+    width: 300px; /* Ograniczenie do szerokości wyświetlacza */
+    margin-top: 5px;
 }
 
 .nav, .func {
-    width: 60px;
-    height: 40px;
+    width: 70px;
+    height: 30px;
     background: linear-gradient(to bottom, #666, #444);
     border: 2px solid #333;
     border-radius: 5px;
     color: #fff;
-    font-size: 18px;
+    font-size: 12px;
     cursor: pointer;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.1);
     transition: all 0.2s;
@@ -88,7 +92,7 @@ body {
     background: linear-gradient(to bottom, #0f0, #0b0);
 }
 
-.func.end {
+.func.back {
     background: linear-gradient(to bottom, #ff4444, #cc0000);
 }
 
@@ -102,147 +106,134 @@ body {
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.card-slots {
+.report-section {
+    grid-area: report;
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    height: 100%; /* Zajmuje przestrzeń od wyświetlacza do dołu */
 }
 
-.card-slot {
-    background: #444;
-    padding: 5px;
-    border: 1px solid #666;
-    border-radius: 3px;
-    width: 45%;
-    text-align: center;
-    font-size: 12px;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.printer {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.print {
-    width: 80px;
-    height: 30px;
-    background: linear-gradient(to bottom, #ff9500, #cc7a00);
+.report-btn {
+    width: 90px;
+    height: 25px;
+    background: linear-gradient(to bottom, #007aff, #0055cc);
     border: 2px solid #333;
     border-radius: 5px;
     color: #fff;
-    font-size: 14px;
+    font-size: 10px;
     cursor: pointer;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     transition: all 0.2s;
 }
 
-.print:hover {
+.report-btn:hover {
     transform: translateY(-1px);
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
 }
 
-.print:active {
+.report-btn:active {
     transform: translateY(1px);
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.controls {
-    width: 100%;
+.card-slots {
+    grid-area: card;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 10px;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 5px;
 }
 
-select, input, button {
-    width: 100%;
-    padding: 8px;
-    margin: 3px 0;
-    border-radius: 5px;
-    border: none;
-    color: #ffffff;
-    font-size: 14px;
-    text-align: center;
-    box-sizing: border-box;
+.card-slot {
     background: #444;
+    padding: 3px;
+    border: 1px solid #666;
+    border-radius: 3px;
+    text-align: center;
+    font-size: 10px;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s, opacity 0.5s;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-slot.inserted {
+    transform: translateY(-10px);
+    opacity: 0.3;
+}
+
+.vehicle-select {
+    grid-area: vehicle;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
 }
 
 select {
+    width: 80%;
+    padding: 6px;
+    border-radius: 5px;
+    border: none;
+    color: #ffffff;
+    font-size: 12px;
+    text-align: center;
     background: #007aff;
     appearance: none;
     padding-right: 20px;
     cursor: pointer;
 }
 
-input::placeholder {
-    color: #cccccc;
+.report-output-section {
+    margin-top: 20px;
+    text-align: center;
 }
 
-button {
-    font-weight: 600;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    min-height: 35px;
-    background: #555;
+.report-output {
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #222;
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-size: 12px;
 }
 
-button.report {
-    background: #007aff;
-}
-
-button.save-report {
-    background: #5856d6;
-}
-
-button.export-data {
-    background: #34c759;
-}
-
-button.reset {
-    background: #ff2d55;
-}
-
-button:hover {
-    opacity: 0.85;
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: translateY(1px);
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-@media (max-width: 400px) {
+@media (max-width: 700px) {
     .tacho-frame {
-        width: 300px;
-        height: 220px;
-        padding: 15px;
+        width: 506px;
+        height: 140px;
+        padding: 8px;
     }
     .display {
-        height: 50px;
-        padding: 3px;
+        width: 225px;
+        height: 60px;
     }
     .lcd-line {
-        font-size: 16px;
+        font-size: 12px;
     }
     .nav, .func {
-        width: 50px;
-        height: 35px;
-        font-size: 16px;
+        width: 52px;
+        height: 23px;
+        font-size: 10px;
+    }
+    .report-btn {
+        width: 68px;
+        height: 19px;
+        font-size: 8px;
     }
     .card-slot {
+        font-size: 8px;
+        padding: 2px;
+    }
+    select {
         font-size: 10px;
-        padding: 3px;
+        padding: 4px;
     }
-    .print {
-        width: 70px;
-        height: 25px;
-        font-size: 12px;
-    }
-    select, input, button {
-        font-size: 12px;
-        padding: 6px;
+    .report-output {
+        max-height: 150px;
+        font-size: 10px;
     }
 }

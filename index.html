@@ -12,44 +12,38 @@
     <div class="tacho-container">
         <div class="tacho-frame">
             <div class="tacho-bezel">
-                <div class="display">
-                    <div class="lcd-line" id="lcdTop">Status: ---</div>
-                    <div class="lcd-line" id="lcdBottom">Czas: 00:00:00</div>
+                <div class="display-section">
+                    <div class="display">
+                        <div class="lcd-line" id="lcdTop">Status: Ⓟ</div>
+                        <div class="lcd-line" id="lcdBottom">Czas: --:--:--</div>
+                    </div>
                 </div>
-                <div class="buttons">
-                    <button class="nav up" onclick="scrollActivity('up')">▲</button>
-                    <button class="nav ok" onclick="startActivity()">OK</button>
-                    <button class="nav down" onclick="scrollActivity('down')">▼</button>
-                    <button class="func end" onclick="endActivity()">Zakończ</button>
+                <div class="button-section">
+                    <button class="func back" onclick="goBack()">Cofnij</button>
+                    <button class="nav up" onclick="scrollActivity('up')">Góra</button>
+                    <button class="nav down" onclick="scrollActivity('down')">Dół</button>
+                    <button class="nav ok" onclick="selectActivity()">OK</button>
+                </div>
+                <div class="report-section">
+                    <button class="report-btn" onclick="generateReport()">Pokaż raport</button>
+                    <button class="report-btn" onclick="printReport()">Drukuj</button>
+                    <button class="report-btn" onclick="saveReport()">Zapisz</button>
                 </div>
                 <div class="card-slots">
-                    <div class="card-slot">Slot 1: <span id="driverSlot1"></span></div>
-                    <div class="card-slot">Slot 2: <span id="driverSlot2"></span></div>
+                    <div class="card-slot" onclick="toggleCard('driverSlot1')">Slot 1: <span id="driverSlot1">Kobylski Patryk</span></div>
                 </div>
-                <div class="printer">
-                    <button class="print" onclick="generateReport()">Drukuj 📄</button>
+                <div class="vehicle-select">
+                    <select id="vehicleSelect" onchange="saveVehicle()">
+                        <option value="">Wybierz lawetę</option>
+                        <option value="SJZ 3SP9">SJZ 3SP9</option>
+                        <option value="SJZ NM05">SJZ NM05</option>
+                        <option value="WE 4EU80">WE 4EU80</option>
+                    </select>
                 </div>
             </div>
-            <div class="controls">
-                <input type="text" id="driverInput" placeholder="Imię i nazwisko">
-                <input type="date" id="driverCardExpiry" placeholder="Ważność karty">
-                <button onclick="saveDriver()">Zapisz</button>
-                <input type="text" id="vehicleInput" placeholder="Numer rejestracyjny">
-                <button onclick="saveVehicle()">Zapisz</button>
-                <select id="activitySelect">
-                    <option value="">Wybierz aktywność</option>
-                    <option value="Jazda">Jazda 🚗</option>
-                    <option value="Przerwa">Przerwa ⏸️</option>
-                    <option value="Odpoczynek">Odpoczynek 🛏️</option>
-                    <option value="Inna praca">Inna praca 👷</option>
-                </select>
-                <input type="text" id="countryInput" placeholder="Kraj (np. PL)">
-                <button onclick="setCountry()">Ustaw kraj</button>
-                <button class="report" onclick="generateReport()">Raport</button>
-                <button class="save-report" onclick="saveReport()">Zapisz</button>
-                <button class="export-data" onclick="exportData()">Eksport</button>
-                <button class="reset" onclick="resetApplication()">Reset</button>
-            </div>
+        </div>
+        <div class="report-output-section">
+            <div id="reportOutput" class="report-output"></div>
         </div>
     </div>
 </body>
